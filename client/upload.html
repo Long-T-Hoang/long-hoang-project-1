@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GunPla Collection</title>
+
+    <link rel="stylesheet" href="default-styles.css">
+
+    <style>
+        .header-link{
+            margin: 10px 10px;
+        }
+    </style>
+
+<script>
+    "use strict"; // because I got rid of client-side babel
+  const parseJSON = (xhr, content) => {
+      if(xhr.response && xhr.getResponseHeader('Content-Type') === 'application/json'){
+        const obj = JSON.parse(xhr.response);
+        console.dir(obj);
+        
+        if(obj.message){
+            content.innerHTML += `<p>${obj.message}</p>`;
+        }
+    }
+  };
+
+  const handleResponse = (xhr) => {
+    const content = document.querySelector('#content');
+    
+    switch(xhr.status){
+        case 200:
+            content.innerHTML = '<b>Success!</b>';
+            break;
+        case 201:
+            content.innerHTML = '<b>Created!</b>';
+            break;
+        case 204:
+            content.innerHTML = '<b>Updated (No Content)!</b>';
+            break;
+        case 400:
+            content.innerHTML = '<b>Bad Request!</b>';
+            break;
+        default:
+            content.innerHTML = '<b>Error code not implemented by client</b>';
+    }
+    
+    parseJSON(xhr,content);
+  };
+
+  const sendPost = (e, nameForm) => {
+          e.preventDefault();
+          
+          const nameAction = nameForm.getAttribute("action");
+          const nameMethod = nameForm.getAttribute("method");
+          
+          const nameField = nameForm.querySelector("#nameField");
+          const releaseYearField = nameForm.querySelector("#releaseYearField");
+          
+          const xhr = new XMLHttpRequest();
+          xhr.open(nameMethod,nameAction); // NEW - in the past we've been using "GET"
+          
+          xhr.setRequestHeader('Accept','application/json');
+          xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+          // what is "x-www-form-urlencoded"
+          // for GET we already saw it - ex. "/unauthorized?loggedIn=yes&valid=true"
+          // everything after the question mark is urlencoded
+          // multiple key=value pairs are separated by the &
+          // HTML forms also encode their values this way
+          // in the form below the values are encoded as "name=someValue&age=someValue"
+          // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
+          
+          xhr.onload = () => handleResponse(xhr);
+          
+          const formData = `name=${nameField.value}&releaseYear=${releaseYearField.value}`;
+          xhr.send(formData); // NEW - in the past we haven't been sending anything here because ...
+          // ... our data has always been encoded in the URL
+          /// ... instead of being in a separate file as it is now
+          
+          /*
+              Things to try:
+              1) Add new users, we should see "201 Created" status code
+              - look in the Request tab of the debugger to see the form data
+              - Recall that every time the server reboots we lose our data because `users` in jsonResponses.js is re-initialized 
+              2) Update a new user (i.e. send the same name) again - we'll see "204 No Content"
+              3) Leave off name or age and get back a "400 Bad Request"
+              4) In the debugger, you can see that the Network request is being made via XHR
+              5) Disable the XHR and you can see the Network request is being made via the form (and we're getting taken to a new page)
+              6) Re-enable the XHR and get rid of the `action` and `method` of the form and make the XHR work
+          */
+          
+          return false; // prevents event bubbling
+  };
+
+  const init = () => {
+    const nameForm = document.querySelector('#nameForm');
+    
+    const addKit = (e) => sendPost(e, nameForm);
+    
+       nameForm.addEventListener('submit', addKit);
+  };
+
+  window.onload = init;
+
+</script>
+</head>
+<body>
+    <h1>GunPla Collection</h1>
+    <header>
+        <a href="/" class="header-link">Main</a>
+        <a href="/kits" class="header-link">Kits</a>
+        <a href="/upload" class="header-link">Upload</a>
+        <a href="/admin" class="header-link">Admin</a>
+    </header>
+    
+    <h3>Add GunPla kits</h3>
+    <p id="content"></p>
+    <form id="nameForm" action="/addKit" method="post">
+      <label for="name">Name: </label>
+      <input id="nameField" type="text" name="name" />
+      <label for="releaseYear">Release Year: </label>
+      <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1"/>
+      <input type="submit" value="Add Kit" />
+    </form>
+</body>
+</html>

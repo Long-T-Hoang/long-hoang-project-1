@@ -22,9 +22,14 @@
         <a href="/upload" class="header-link">Upload</a>
         <a href="/admin" class="header-link">Admin</a>
     </header>
-
-    <h2>404 - File Not Found!</h1>
-    <p>Check your URL, or your typing!!</p>
-    <p>Perhaps you are looking for <a href="/kits">/kits</a> or <a href="/upload">/upload</a></p>
+    
+    <h3>Search GunPla kits</h3>
+    <form id="nameForm" action="/getKit" method="get">
+      <label for="name">Name: </label>
+      <input id="nameField" type="text" name="name" />
+      <label for="releaseYear">Release Year: </label>
+      <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1"/>
+      <input type="submit" value="Get Kit" />
+    </form>
 </body>
 </html>

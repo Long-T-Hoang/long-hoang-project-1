@@ -1,23 +1,6 @@
-const jokes = [
-  { q: 'What do you call a very small valentine?', a: 'A valen-tiny!' },
-  { q: 'What did the dog say when he rubbed his tail on the sandpaper?', a: 'Ruff, Ruff!' },
-  { q: "Why don't sharks like to eat clowns?", a: 'Because they taste funny!' },
-  { q: 'What did the boy cat say to the girl cat?', a: "You're Purr-fect!" },
-  { q: "What is a frog's favorite outdoor sport?", a: 'Fly Fishing!' },
-  { q: 'I hate jokes about German sausages.', a: 'Theyre the wurst.' },
-  { q: 'Did you hear about the cheese factory that exploded in France?', a: 'There was nothing left but de Brie.' },
-  { q: 'Our wedding was so beautiful ', a: 'Even the cake was in tiers.' },
-  { q: 'Is this pool safe for diving?', a: 'It deep ends.' },
-  { q: 'Dad, can you put my shoes on?', a: 'I dont think theyll fit me.' },
-  { q: 'Can February March?', a: 'No, but April May' },
-  { q: 'What lies at the bottom of the ocean and twitches?', a: 'A nervous wreck.' },
-  { q: 'Im reading a book on the history of glue.', a: 'I just cant seem to put it down.' },
-  { q: 'Dad, can you put the cat out?', a: 'I didnt know it was on fire.' },
-  { q: 'What did the ocean say to the sailboat?', a: 'Nothing, it just waved.' },
-  { q: 'What do you get when you cross a snowman with a vampire?', a: 'Frostbite' },
-];
+const kits = [{name: "RG Nu Gundam", releaseYear: 2018}];
 
-// shuffle jokes array
+// shuffle array/object
 const shuffle = (array) => {
   const shuffledArray = array;
 
@@ -37,88 +20,75 @@ const shuffle = (array) => {
 // Refactored to an arrow function by ACJ
 const getBinarySize = (string) => Buffer.byteLength(string, 'utf8');
 
-// get one joke
-const getRandomJoke = (joke) => JSON.stringify(joke);
-
-const getRandomJokeXML = (joke) => {
-  const xmlResponse = `<joke>
-    <q>${joke.q}</q>
-    <a>${joke.a}</a>
-  </joke>`;
-
-  return xmlResponse;
-};
-
-// get multiple jokes
-const getMultiRandomJokes = (limit = 1) => {
-  let jokeLimit = parseInt(limit, 10);
-
-  if (jokeLimit < 1) jokeLimit = 1;
-  else if (jokeLimit > jokes.length) jokeLimit = jokes.length;
-  jokeLimit = Math.floor(jokeLimit);
-
-  const jokesResponse = shuffle(jokes).slice(0, limit);
-  return jokesResponse;
-};
-
-const getMultiRandomJokesJSON = (jokeList) => JSON.stringify(jokeList);
-
-const getMultiRandomJokesXML = (jokeList) => {
-  let xmlResponse = '<jokes>';
-
-  for (let i = 0; i < jokeList.length; i += 1) {
-    xmlResponse
-    += `<joke>
-    <q>${jokeList[i].q}</q>
-    <a>${jokeList[i].a}</a>
-    </joke>`;
-  }
-
-  xmlResponse += '</jokes>';
-
-  return xmlResponse;
-};
-
 // responses
-const respond = (request, response, content, type, httpMethod) => {
-  if (httpMethod !== 'HEAD') {
-    response.writeHead(200, { 'Content-Type': type });
-    response.write(content);
-    response.end();
-  } else {
-    const contentLength = getBinarySize(content);
-
-    response.writeHead(200, { 'Content-Type': type, 'Content-Length': contentLength });
-    response.end();
-  }
+const respond = (request, response, status, content, type = 'application/json') => {
+  response.writeHead(status, { 'Content-Type': type });
+  response.write(content);
+  response.end();
 };
 
-const getMultiRandomJokeResponse = (request, response, acceptedTypes, params, httpMethod) => {
-  // pick out one joke
-  const jokeList = getMultiRandomJokes(params.limit);
+const respondMeta = (request, response, status, type = 'application/json') => {
+  response.writeHead(status, { 'Content-Type': type });
+  response.end();
+}
 
-  // write response based on accept header
-  if (acceptedTypes.includes('text/xml')) {
-    return respond(request, response, getMultiRandomJokesXML(jokeList), 'text/xml', httpMethod);
+// POST code
+const addKit = (request, response, uploadContent) => {
+  if( !uploadContent.name || !uploadContent.releaseYear)
+  {
+    return respond(request, response, 400, 'name and releaseYear are both required', 'application/json');
+  }
+  
+  let responseCode = 201;
+  
+  let searchKit = kits.find( e => e.name === uploadContent.name );
+
+  if(searchKit)
+  {
+    responseCode = 204;
+    const index = kits.indexOf(searchKit);
+    kits[index].name = uploadContent.name;
+    kits[index].releaseYear = uploadContent.releaseYear;
+
+    return respondMeta(request, response, responseCode);
+  }
+  else
+  {
+    const kitToAdd = { name: uploadContent.name, releaseYear: uploadContent.releaseYear};
+    kits.push(kitToAdd);
+
+    return respond(request, response, 201, 'Created Successfully');
+  }
+}
+
+
+// GET code
+const getKitsResponse = (request, response, params) => {
+  if(kits.length === 0)
+  {
+    return respondMeta(request, response, 404);
   }
 
-  return respond(request, response, getMultiRandomJokesJSON(jokeList), 'application/json', httpMethod);
-};
+  const content = kits.filter( e => {
+    e.name === params.name || e.releaseYear === params.releaseYear
+  });
 
-const getRandomJokeResponse = (request, response, acceptedTypes, params, httpMethod) => {
-  // pick out one joke
-  const number = Math.floor(Math.random() * jokes.length);
-  const joke = jokes[number];
+  return respond(request, response, 200, JSON.stringify(content));
+}
 
-  // write response based on accept header
-  if (acceptedTypes.includes('text/xml')) {
-    return respond(request, response, getRandomJokeXML(joke), 'text/xml', httpMethod);
+const getAllKitsResponse = (request, response) => {
+  if(kits.length === 0)
+  {
+    return respondMeta(request, response, 404);
   }
 
-  return respond(request, response, getRandomJoke(joke), 'application/json', httpMethod);
-};
+  const content = JSON.stringify(kits);
+  
+  return respond(request, response, 200, content);
+}
 
 module.exports = {
-  getRandomJokeResponse,
-  getMultiRandomJokeResponse,
+  getKitsResponse,
+  getAllKitsResponse,
+  addKit,
 };

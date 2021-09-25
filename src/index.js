@@ -9,42 +9,86 @@ const query = require('querystring');
 
 const htmlHandler = require('./htmlResponses');
 const jsonHandler = require('./jsonResponses');
+const path = require('path');
 
 // 3 - locally this will be 3000, on Heroku it will be assigned
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
-  '/random-joke': jsonHandler.getRandomJokeResponse,
-  '/random-jokes': jsonHandler.getMultiRandomJokeResponse,
-  '/default-styles.css': htmlHandler.getCSSResponse,
-  '/joke-client.html': htmlHandler.getJokeClient,
-  notFound: htmlHandler.get404Response,
+    // get html
+    '/': htmlHandler.getIndexResponse,
+    '/kits': htmlHandler.getKitsResponse,
+    '/upload': htmlHandler.getUploadResponse,
+    '/admin': htmlHandler.getAdminResponse,
+    '/default-styles.css': htmlHandler.getCSSResponse,
+
+    // function end points
+    '/allKits': jsonHandler.getAllKitsResponse,
+    notFound: htmlHandler.get404Response,
+
 };
 
-// 7 - this is the function that will be called every time a client request comes in
-// this time we will look at the `pathname`, and send back the appropriate page
-// note that in this course we'll be using arrow functions 100% of the time in our server-side code
+const handlePost = (request, response, pathname) => {
+  if (pathname === '/addKit') {
+    const body = [];
+    
+    // https://nodejs.org/api/http.html
+    request.on('error', (err) => {
+      console.dir(error);
+      response.statusCode = 400;
+      response.end();
+    });
+    
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    });
+    
+    request.on('end', () => {
+      const bodyString = Buffer.concat(body).toString();
+      const bodyParams = query.parse(bodyString);
+      
+      jsonHandler.addKit(request, response, bodyParams);
+    });
+  }
+};
+
+const handleGet = (request, response, pathname, params) => {
+  if (urlStruct[pathname]) {
+    urlStruct[pathname](request, response, params);
+  } else {
+    urlStruct.notFound(request, response);
+  }
+}
+
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const { pathname } = parsedUrl;
   const params = query.parse(parsedUrl.query);
-  let acceptedTypes = [];
   const httpMethod = request.method;
 
+  let acceptedTypes = [];
   if (request.headers.accept) {
     acceptedTypes = request.headers.accept.split(',');
   }
 
-  // console.log(request.headers);
-  // console.log('parsedUrl=', parsedUrl);
-  // console.log('pathname=', pathname);
-  // console.log(params);
+  console.log("pathname: " + pathname);
 
-  if (urlStruct[pathname]) {
-    urlStruct[pathname](request, response, acceptedTypes, params, httpMethod);
-  } else {
-    urlStruct.notFound(request, response);
+  if(httpMethod === "POST")
+  {
+    handlePost(request, response, pathname);
   }
+  else
+  {
+    handleGet(request, response, pathname, params);
+  }
+
+  /*
+  if (urlStruct[httpMethod][pathname]) {
+    urlStruct[httpMethod][pathname](request, response, acceptedTypes, params);
+  } else {
+    urlStruct[httpMethod].notFound(request, response);
+  }
+  */
 };
 
 // 8 - create the server, hook up the request handling function, and start listening on `port`

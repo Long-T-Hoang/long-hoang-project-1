@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GunPla Collection</title>
+
+    <link rel="stylesheet" href="default-styles.css">
+
+    <style>
+        .header-link{
+            margin: 10px 10px;
+        }
+    </style>
+
+    <script>
+    "use strict"; // because I got rid of client-side babel
+  
+    const handleResponse = (e) => {
+        const content = document.querySelector('#content');
+        const container = document.querySelector("#kits");
+
+        // status message
+        switch(e.target.status){
+            case 200:
+                content.innerHTML = '<b>Success!</b>';
+                break;
+            case 201:
+                content.innerHTML = '<b>Created!</b>';
+                break;
+            case 204:
+                content.innerHTML = '<b>Updated (No Content)!</b>';
+                break;
+            case 400:
+                content.innerHTML = '<b>Bad Request!</b>';
+                break;
+            case 404:
+                content.innerHTML = '<b>No contents!</b>';
+            default:
+                content.innerHTML = '<b>Error code not implemented by client</b>';
+        }
+
+        const obj = JSON.parse(e.target.response);
+        
+        console.log(obj);
+
+        if(obj)
+        {
+            for(let i = 0; i < obj.length; i += 1)
+            {
+                container.innerHTML += `
+                <div class="kit">
+                <p>Name: ${obj[i].name}</p>
+                <p>Release Year: ${obj[i].releaseYear}</p>
+                <hr>
+                </div>
+                `;
+            }
+        }
+    };
+
+    const init = () => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/allKits'); // NEW - in the past we've been using "GET"
+            
+        xhr.setRequestHeader('Accept','application/json');
+            
+        xhr.onload = handleResponse;
+            
+        xhr.send(); // NEW - in the past we haven't been sending anything here because ...
+    };
+
+    window.onload = init;
+    </script>
+</head>
+<body>
+    <h1>GunPla Collection</h1>
+    <header>
+        <a href="/" class="header-link">Main</a>
+        <a href="/kits" class="header-link">Kits</a>
+        <a href="/upload" class="header-link">Upload</a>
+        <a href="/admin" class="header-link">Admin</a>
+    </header>
+    
+    <h2>Placeholder admin page</h2>
+    <p id="content"></p>
+    
+    <div id="kits"></div>
+</body>
+</html>
