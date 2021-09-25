@@ -17,25 +17,25 @@ const getIndexResponse = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
   response.write(indexPage);
   response.end();
-}
+};
 
 const getKitsResponse = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
   response.write(kitsPage);
   response.end();
-}
+};
 
 const getUploadResponse = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
   response.write(uploadPage);
   response.end();
-}
+};
 
 const getAdminResponse = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
   response.write(adminPage);
   response.end();
-}
+};
 
 const getCSSResponse = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/css' });

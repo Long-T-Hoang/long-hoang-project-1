@@ -7,46 +7,47 @@ const http = require('http');
 const url = require('url');
 const query = require('querystring');
 
+// const path = require('path');
 const htmlHandler = require('./htmlResponses');
 const jsonHandler = require('./jsonResponses');
-const path = require('path');
 
 // 3 - locally this will be 3000, on Heroku it will be assigned
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
-    // get html
-    '/': htmlHandler.getIndexResponse,
-    '/kits': htmlHandler.getKitsResponse,
-    '/upload': htmlHandler.getUploadResponse,
-    '/admin': htmlHandler.getAdminResponse,
-    '/default-styles.css': htmlHandler.getCSSResponse,
+  // get html
+  '/': htmlHandler.getIndexResponse,
+  '/kits': htmlHandler.getKitsResponse,
+  '/upload': htmlHandler.getUploadResponse,
+  '/admin': htmlHandler.getAdminResponse,
+  '/default-styles.css': htmlHandler.getCSSResponse,
 
-    // function end points
-    '/allKits': jsonHandler.getAllKitsResponse,
-    notFound: htmlHandler.get404Response,
+  // function end points
+  '/allKits': jsonHandler.getAllKitsResponse,
+  notFound: htmlHandler.get404Response,
 
 };
 
 const handlePost = (request, response, pathname) => {
   if (pathname === '/addKit') {
     const body = [];
-    
+
     // https://nodejs.org/api/http.html
-    request.on('error', (err) => {
+    // request.on('error', (err) => {
+    request.on('error', (error) => {
       console.dir(error);
       response.statusCode = 400;
       response.end();
     });
-    
+
     request.on('data', (chunk) => {
       body.push(chunk);
     });
-    
+
     request.on('end', () => {
       const bodyString = Buffer.concat(body).toString();
       const bodyParams = query.parse(bodyString);
-      
+
       jsonHandler.addKit(request, response, bodyParams);
     });
   }
@@ -58,7 +59,7 @@ const handleGet = (request, response, pathname, params) => {
   } else {
     urlStruct.notFound(request, response);
   }
-}
+};
 
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
@@ -66,19 +67,18 @@ const onRequest = (request, response) => {
   const params = query.parse(parsedUrl.query);
   const httpMethod = request.method;
 
+  /*
   let acceptedTypes = [];
   if (request.headers.accept) {
     acceptedTypes = request.headers.accept.split(',');
   }
+  */
 
-  console.log("pathname: " + pathname);
+  console.log(`pathname: ${pathname}`);
 
-  if(httpMethod === "POST")
-  {
+  if (httpMethod === 'POST') {
     handlePost(request, response, pathname);
-  }
-  else
-  {
+  } else {
     handleGet(request, response, pathname, params);
   }
 
