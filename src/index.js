@@ -20,10 +20,13 @@ const urlStruct = {
   '/kits': htmlHandler.getKitsResponse,
   '/upload': htmlHandler.getUploadResponse,
   '/admin': htmlHandler.getAdminResponse,
+  '/kit': htmlHandler.getKitResponse,
   '/default-styles.css': htmlHandler.getCSSResponse,
 
   // function end points
   '/allKits': jsonHandler.getAllKitsResponse,
+  '/getKits': jsonHandler.getKitsResponse,
+  '/getKit': jsonHandler.getKitResponse,
   notFound: htmlHandler.get404Response,
 
 };
@@ -75,6 +78,7 @@ const onRequest = (request, response) => {
   */
 
   console.log(`pathname: ${pathname}`);
+  console.log(params);
 
   if (httpMethod === 'POST') {
     handlePost(request, response, pathname);

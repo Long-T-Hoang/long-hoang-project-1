@@ -1,4 +1,6 @@
-const kits = [{ name: 'RG Nu Gundam', releaseYear: 2018 }];
+const kits = [{
+  id: 0, name: 'RG Nu Gundam', releaseYear: 2018, imageURL: 'https://www.1999.co.jp/itbig60/10609842.jpg',
+}];
 
 // shuffle array/object
 /*
@@ -53,7 +55,12 @@ const addKit = (request, response, uploadContent) => {
     return respondMeta(request, response, responseCode);
   }
 
-  const kitToAdd = { name: uploadContent.name, releaseYear: uploadContent.releaseYear };
+  const kitToAdd = {
+    id: kits.length,
+    name: uploadContent.name,
+    releaseYear: uploadContent.releaseYear,
+    imageURL: uploadContent.imageURL,
+  };
   kits.push(kitToAdd);
 
   return respond(request, response, 201, 'Created Successfully');
@@ -81,8 +88,19 @@ const getAllKitsResponse = (request, response) => {
   return respond(request, response, 200, content);
 };
 
+const getKitResponse = (request, response, params) => {
+  if (kits.length === 0) {
+    return respondMeta(request, response, 404);
+  }
+
+  const content = kits[params.id];
+
+  return respond(request, response, 200, JSON.stringify(content));
+};
+
 module.exports = {
   getKitsResponse,
   getAllKitsResponse,
+  getKitResponse,
   addKit,
 };

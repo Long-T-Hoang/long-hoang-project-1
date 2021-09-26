@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GunPla Collection</title>
+
+    <link rel="stylesheet" href="default-styles.css">
+
+    <style>
+        .header-link{
+            margin: 10px 10px;
+        }
+    </style>
+
+    <script>
+        "use strict"; // because I got rid of client-side babel
+    
+        const handleResponse = (e) => {
+            const content = document.querySelector('#content');
+            const container = document.querySelector("#kit");
+
+            const obj = JSON.parse(e.target.response);
+            
+            console.log(obj);
+
+            // temporarily using links of image online
+
+            container.innerHTML = `
+                <div class="kit">
+                <img src="${obj.imageURL}" alt="${obj.name}">   
+                <p>Name: ${obj.name}</p>
+                <p>Release Year: ${obj.releaseYear}</p>
+                <hr>
+                </div>
+            `;
+        }
+
+        const searchKit = () => {
+            let queryString = '/getKit';
+
+            const params = new URLSearchParams(window.location.search);
+
+            console.log(params.get("id"));
+            queryString += `?id=${params.get("id")}`;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", queryString); 
+                
+            xhr.setRequestHeader('Accept','application/json');
+                
+            xhr.onload = handleResponse;
+                
+            xhr.send();
+
+            return false;
+        }
+
+        const init = () => {
+            searchKit();
+        };
+
+        window.onload = init;
+    </script>
+</head>
+<body>
+    <h1>GunPla Collection</h1>
+    <header>
+        <a href="/" class="header-link">Main</a>
+        <a href="/kits" class="header-link">Kits</a>
+        <a href="/upload" class="header-link">Upload</a>
+        <a href="/admin" class="header-link">Admin</a>
+    </header>
+    
+    <div id="kit"></div>
+</body>
+</html>

@@ -16,7 +16,11 @@
 
     <script>
     "use strict"; // because I got rid of client-side babel
-  
+    
+    const removeEntry = (id) => {
+        console.log("remove kit id." + id);
+    }
+    
     const handleResponse = (e) => {
         const content = document.querySelector('#content');
         const container = document.querySelector("#kits");
@@ -45,6 +49,7 @@
         
         console.log(obj);
 
+        // print out search results
         if(obj)
         {
             for(let i = 0; i < obj.length; i += 1)
@@ -53,13 +58,18 @@
                 <div class="kit">
                 <p>Name: ${obj[i].name}</p>
                 <p>Release Year: ${obj[i].releaseYear}</p>
+                <button class="remove-btn" type="button"data-id="${obj[i].id}">Remove kit</button>
                 <hr>
                 </div>
                 `;
             }
         }
-    };
 
+        // add event listeners to buttons
+        const removeBtn = document.querySelector(".remove-btn");
+        removeBtn.addEventListener("click", (e) => removeEntry(e.target.dataset.id));
+    };
+    
     const init = () => {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', '/allKits'); // NEW - in the past we've been using "GET"
@@ -83,7 +93,7 @@
         <a href="/admin" class="header-link">Admin</a>
     </header>
     
-    <h2>Placeholder admin page</h2>
+    <h2>Admin page</h2>
     <p id="content"></p>
     
     <div id="kits"></div>

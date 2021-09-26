@@ -5,6 +5,7 @@ const indexPage = fs.readFileSync(`${__dirname}/../client/index.html`);
 const kitsPage = fs.readFileSync(`${__dirname}/../client/kits.html`);
 const uploadPage = fs.readFileSync(`${__dirname}/../client/upload.html`);
 const adminPage = fs.readFileSync(`${__dirname}/../client/admin.html`);
+const kitPage = fs.readFileSync(`${__dirname}/../client/kit.html`);
 const defaultCSS = fs.readFileSync(`${__dirname}/../css/default-styles.css`);
 
 const get404Response = (request, response) => {
@@ -37,6 +38,12 @@ const getAdminResponse = (request, response) => {
   response.end();
 };
 
+const getKitResponse = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'text/html' });
+  response.write(kitPage);
+  response.end();
+};
+
 const getCSSResponse = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/css' });
   response.write(defaultCSS);
@@ -49,5 +56,6 @@ module.exports = {
   getKitsResponse,
   getUploadResponse,
   getAdminResponse,
+  getKitResponse,
   getCSSResponse,
 };

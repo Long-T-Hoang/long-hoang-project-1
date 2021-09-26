@@ -13,6 +13,107 @@
             margin: 10px 10px;
         }
     </style>
+
+<script>
+    "use strict"; // because I got rid of client-side babel
+  
+    const handleResponse = (e) => {
+        const content = document.querySelector('#content');
+        const container = document.querySelector("#kits");
+
+        // status message
+        switch(e.target.status){
+            case 200:
+                content.innerHTML = '<b>Success!</b>';
+                break;
+            case 201:
+                content.innerHTML = '<b>Created!</b>';
+                break;
+            case 204:
+                content.innerHTML = '<b>Updated (No Content)!</b>';
+                break;
+            case 400:
+                content.innerHTML = '<b>Bad Request!</b>';
+                break;
+            case 404:
+                content.innerHTML = '<b>No contents!</b>';
+            default:
+                content.innerHTML = '<b>Error code not implemented by client</b>';
+        }
+
+        const obj = JSON.parse(e.target.response);
+        
+        console.log(obj);
+
+        // clear out previous results
+        container.innerHTML = "";
+
+        // print obj into page
+        if(obj)
+        {
+            for(let i = 0; i < obj.length; i += 1)
+            {
+                container.innerHTML += `
+                <div class="kit">
+                <p>Name: ${obj[i].name}</p>
+                <p>Release Year: ${obj[i].releaseYear}</p>
+                <a href=/kit?id=${obj[i].id}>Details</a>
+                <hr>
+                </div>
+                `;
+            }
+        }
+    };
+
+    const searchKit = (e, searchForm) => {
+        e.preventDefault();
+
+        const method = searchForm.getAttribute("method");
+        const action = searchForm.getAttribute("action");
+
+        //const nameField = nameForm.querySelector("#nameField");
+        //const releaseYearField = nameForm.querySelector("#releaseYearField");
+        
+        const fieldArray = [];
+        fieldArray.push(searchForm.querySelector("#nameField"));
+        fieldArray.push(searchForm.querySelector("#releaseYearField"));
+
+        let queryString = action;
+
+        if(fieldArray.length > 0)
+        {
+            queryString += "?"
+
+            for(let i = 0; i < fieldArray.length; i += 1)
+            {
+                queryString += `${fieldArray[i].name}=${encodeURIComponent(fieldArray[i].value)}`;
+
+                if(i < fieldArray.length - 1) queryString += "&";
+            }
+        }
+
+        console.log(queryString);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, queryString); 
+
+        xhr.setRequestHeader('Accept','application/json');
+            
+        xhr.onload = handleResponse;
+            
+        xhr.send(); 
+
+        return false;
+    }
+
+    const init = () => {
+        const searchForm = document.querySelector("#searchForm");
+
+        searchForm.addEventListener("submit", (e) => searchKit(e, searchForm));
+    };
+
+    window.onload = init;
+    </script>
 </head>
 <body>
     <h1>GunPla Collection</h1>
@@ -24,12 +125,16 @@
     </header>
     
     <h3>Search GunPla kits</h3>
-    <form id="nameForm" action="/getKit" method="get">
+    <form id="searchForm" action="/getKits" method="get">
       <label for="name">Name: </label>
       <input id="nameField" type="text" name="name" />
       <label for="releaseYear">Release Year: </label>
       <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1"/>
       <input type="submit" value="Get Kit" />
     </form>
+
+    <p id="content"></p>
+    
+    <div id="kits"></div>
 </body>
 </html>
