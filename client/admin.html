@@ -8,20 +8,38 @@
 
     <link rel="stylesheet" href="default-styles.css">
 
-    <style>
-        .header-link{
-            margin: 10px 10px;
-        }
-    </style>
-
     <script>
     "use strict"; // because I got rid of client-side babel
     
+    const removeKit = (e) => {
+        const obj = JSON.parse(e.target.response);
+
+        const regex = /[ ]/g;
+        const target = '#'+ obj.name.replace(regex, '-');
+
+        const kitToDelete = document.querySelector(target);
+
+        kitToDelete.innerHTML = `
+        <p>${obj.message}</p>
+        <hr>
+        `;
+    }
+
     const removeEntry = (id) => {
-        console.log("remove kit id." + id);
+        const xhr = new XMLHttpRequest();
+
+        const queryString = `/deleteKit?id=${id}`;
+
+        xhr.open('GET', queryString); 
+            
+        xhr.setRequestHeader('Accept','application/json');
+            
+        xhr.onload = removeKit;
+            
+        xhr.send(); 
     }
     
-    const handleResponse = (e) => {
+    const writeAllKits = (e) => {
         const content = document.querySelector('#content');
         const container = document.querySelector("#kits");
 
@@ -49,15 +67,18 @@
         
         console.log(obj);
 
-        // print out search results
+        const regex = /[ ]/g;
+
+        // write out search results
         if(obj)
         {
             for(let i = 0; i < obj.length; i += 1)
             {
                 container.innerHTML += `
-                <div class="kit">
+                <div class="kit" id="${obj[i].name.replace(regex, '-')}">
                 <p>Name: ${obj[i].name}</p>
                 <p>Release Year: ${obj[i].releaseYear}</p>
+                <a href=/kit?id=${obj[i].id}>Details</a>
                 <button class="remove-btn" type="button"data-id="${obj[i].id}">Remove kit</button>
                 <hr>
                 </div>
@@ -70,21 +91,26 @@
         removeBtn.addEventListener("click", (e) => removeEntry(e.target.dataset.id));
     };
     
-    const init = () => {
+    const getAllKits = () => {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/allKits'); // NEW - in the past we've been using "GET"
+        xhr.open('GET', '/allKits'); 
             
         xhr.setRequestHeader('Accept','application/json');
             
-        xhr.onload = handleResponse;
+        xhr.onload = writeAllKits;
             
-        xhr.send(); // NEW - in the past we haven't been sending anything here because ...
+        xhr.send(); 
+    }
+
+    const init = () => {
+        getAllKits();
     };
 
     window.onload = init;
     </script>
 </head>
 <body>
+    <img src="/logo" alt="test logo" width="150">
     <h1>GunPla Collection</h1>
     <header>
         <a href="/" class="header-link">Main</a>
@@ -95,7 +121,7 @@
     
     <h2>Admin page</h2>
     <p id="content"></p>
-    
+    <hr>
     <div id="kits"></div>
 </body>
 </html>

@@ -2,3 +2,58 @@
 {
     font-family: sans-serif;
 }
+
+img{
+    display: inline;
+}
+
+h1{
+    display: inline;
+}
+
+/* header */
+header{
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    border: 5px solid red;
+    background-color: blue;
+}
+
+.header-link{
+    align-items: center;
+    flex-grow: 1;
+    width: auto;
+    padding: 5px;
+    text-decoration: none;
+    background-color: blue;
+    color: white;
+}
+
+.kit a{
+    display: inline;
+    margin: 10px 0px;
+    text-decoration: none;
+}
+
+/* links */
+/* header links */
+.header-link:hover{
+    color: yellow;
+    background-color: rgb(139, 139, 255);
+}
+
+.header-link:active{
+    color: orange;
+    background-color: rgb(216, 216, 253);
+}
+
+/* detail links */
+.kit a:visited{
+    color: rgb(255, 0, 98);
+}
+
+.kit a:hover{
+    color: yellow;
+    background-color: blue;
+}

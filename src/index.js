@@ -10,6 +10,7 @@ const query = require('querystring');
 // const path = require('path');
 const htmlHandler = require('./htmlResponses');
 const jsonHandler = require('./jsonResponses');
+const mediaHandler = require('./mediaResponses');
 
 // 3 - locally this will be 3000, on Heroku it will be assigned
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
@@ -27,6 +28,11 @@ const urlStruct = {
   '/allKits': jsonHandler.getAllKitsResponse,
   '/getKits': jsonHandler.getKitsResponse,
   '/getKit': jsonHandler.getKitResponse,
+  '/deleteKit': jsonHandler.deleteKitResponse,
+
+  // media end points
+  '/logo': mediaHandler.getLogoResponse,
+
   notFound: htmlHandler.get404Response,
 
 };
@@ -70,13 +76,6 @@ const onRequest = (request, response) => {
   const params = query.parse(parsedUrl.query);
   const httpMethod = request.method;
 
-  /*
-  let acceptedTypes = [];
-  if (request.headers.accept) {
-    acceptedTypes = request.headers.accept.split(',');
-  }
-  */
-
   console.log(`pathname: ${pathname}`);
   console.log(params);
 
@@ -85,14 +84,6 @@ const onRequest = (request, response) => {
   } else {
     handleGet(request, response, pathname, params);
   }
-
-  /*
-  if (urlStruct[httpMethod][pathname]) {
-    urlStruct[httpMethod][pathname](request, response, acceptedTypes, params);
-  } else {
-    urlStruct[httpMethod].notFound(request, response);
-  }
-  */
 };
 
 // 8 - create the server, hook up the request handling function, and start listening on `port`

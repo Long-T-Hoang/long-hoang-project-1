@@ -44,6 +44,7 @@ const getKitResponse = (request, response) => {
   response.end();
 };
 
+// will be moved to a separate file
 const getCSSResponse = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/css' });
   response.write(defaultCSS);

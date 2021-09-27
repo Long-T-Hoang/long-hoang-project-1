@@ -19,11 +19,6 @@ const shuffle = (array) => {
 };
 */
 
-// ALWAYS GIVE CREDIT - in your code comments and documentation
-// Source: https://stackoverflow.com/questions/2219526/how-many-bytes-in-a-javascript-string/29955838
-// Refactored to an arrow function by ACJ
-// const getBinarySize = (string) => Buffer.byteLength(string, 'utf8');
-
 // responses
 const respond = (request, response, status, content, type = 'application/json') => {
   response.writeHead(status, { 'Content-Type': type });
@@ -55,6 +50,7 @@ const addKit = (request, response, uploadContent) => {
     return respondMeta(request, response, responseCode);
   }
 
+  // create object to add to aray
   const kitToAdd = {
     id: kits.length,
     name: uploadContent.name,
@@ -72,7 +68,15 @@ const getKitsResponse = (request, response, params) => {
     return respondMeta(request, response, 404);
   }
 
-  const lookForKit = (e) => e.name === params.name || e.releaseYear === params.releaseYear;
+  const lookForKit = (e) => {
+    const nameMatch = e.name.toLowerCase().includes(params.name.toLowerCase());
+    const yearMatch = e.releaseYear === params.releaseYear;
+
+    if (nameMatch || yearMatch) return true;
+
+    return false;
+  };
+
   const content = kits.filter(lookForKit);
 
   return respond(request, response, 200, JSON.stringify(content));
@@ -98,9 +102,23 @@ const getKitResponse = (request, response, params) => {
   return respond(request, response, 200, JSON.stringify(content));
 };
 
+const deleteKitResponse = (request, response, params) => {
+  if (kits.length <= params.id) {
+    return respondMeta(request, response, 404);
+  }
+
+  const content = { name: kits[params.id].name, message: 'Kit deleted successfully!' };
+
+  // delete entry
+  kits.splice(params.id, 1);
+  console.log(content);
+  return respond(request, response, 200, JSON.stringify(content));
+};
+
 module.exports = {
   getKitsResponse,
   getAllKitsResponse,
   getKitResponse,
   addKit,
+  deleteKitResponse,
 };
