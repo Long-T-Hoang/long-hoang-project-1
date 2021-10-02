@@ -111,7 +111,7 @@ const getKitsResponse = (request, response, params) => {
     content.push(makePreviewKitObj(result[i]));
   }
 
-  if(content.length == 0)
+  if(content.length === 0)
   {
     return respondMeta(request, response, 204);
   }
