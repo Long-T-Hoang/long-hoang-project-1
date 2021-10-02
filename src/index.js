@@ -29,6 +29,7 @@ const urlStruct = {
   '/getKits': jsonHandler.getKitsResponse,
   '/getKit': jsonHandler.getKitResponse,
   '/deleteKit': jsonHandler.deleteKitResponse,
+  '/getKitComment': jsonHandler.getKitCommentResponse,
 
   // media end points
   '/logo': mediaHandler.getLogoResponse,
@@ -44,7 +45,7 @@ const handlePost = (request, response, pathname) => {
     // https://nodejs.org/api/http.html
     // request.on('error', (err) => {
     request.on('error', (error) => {
-      console.dir(error);
+      //console.dir(error);
       response.statusCode = 400;
       response.end();
     });
@@ -76,8 +77,8 @@ const onRequest = (request, response) => {
   const params = query.parse(parsedUrl.query);
   const httpMethod = request.method;
 
-  console.log(`pathname: ${pathname}`);
-  console.log(params);
+  //console.log(`pathname: ${pathname}`);
+  //console.log(params);
 
   if (httpMethod === 'POST') {
     handlePost(request, response, pathname);

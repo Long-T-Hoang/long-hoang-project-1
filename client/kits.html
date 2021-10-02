@@ -35,26 +35,28 @@
                 content.innerHTML = '<b>Error code not implemented by client</b>';
         }
 
-        const obj = JSON.parse(e.target.response);
-        
-        console.log(obj);
-
-        // clear out previous results
-        container.innerHTML = "";
-
-        // print obj into page
-        if(obj)
+        // Parse and print out content if there response
+        if(e.target.response)
         {
-            for(let i = 0; i < obj.length; i += 1)
+            const obj = JSON.parse(e.target.response);
+            
+            // clear out previous results
+            container.innerHTML = "";
+
+            // print obj into page
+            if(obj)
             {
-                container.innerHTML += `
-                <div class="kit">
-                <p>Name: ${obj[i].name}</p>
-                <p>Release Year: ${obj[i].releaseYear}</p>
-                <a href=/kit?id=${obj[i].id}>Details</a>
-                <hr>
-                </div>
-                `;
+                for(let i = 0; i < obj.length; i += 1)
+                {
+                    container.innerHTML += `
+                    <div class="kit">
+                    <p>Name: ${obj[i].name}</p>
+                    <p>Release Year: ${obj[i].releaseYear}</p>
+                    <a href=/kit?id=${obj[i].id}>Details</a>
+                    <hr>
+                    </div>
+                    `;
+                }
             }
         }
     };

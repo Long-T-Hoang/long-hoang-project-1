@@ -1,9 +1,16 @@
-const kits = [{
-  id: 0, name: 'RG Nu Gundam', releaseYear: 2018, imageURL: 'https://www.1999.co.jp/itbig60/10609842.jpg',
-}];
+const kits = [
+  {
+    id: 0, name: 'RG Nu Gundam', releaseYear: 2018, imageURL: 'https://www.1999.co.jp/itbig60/10609842.jpg',
+      comments: 
+        [
+          {comment: "Great kit! Would buy again 10/10"}
+        ]
+  }
+];
 
-// shuffle array/object
 /*
+shuffle array/object
+
 const shuffle = (array) => {
   const shuffledArray = array;
 
@@ -63,13 +70,32 @@ const addKit = (request, response, uploadContent) => {
 };
 
 // GET code
+
+const makePreviewKitObj = (obj) => {
+  const target = obj;
+  console.log(target);
+  const content = {
+    id: target.id, 
+    name: target.name, 
+    releaseYear: target.releaseYear, 
+    imageURL: target.imageURL
+  };
+
+  return content;
+}
+
 const getKitsResponse = (request, response, params) => {
   if (kits.length === 0) {
     return respondMeta(request, response, 404);
   }
 
   const lookForKit = (e) => {
-    const nameMatch = e.name.toLowerCase().includes(params.name.toLowerCase());
+    let nameMatch = false;
+
+    if (params.name) {
+      nameMatch = e.name.toLowerCase().includes(params.name.toLowerCase());
+    }
+
     const yearMatch = e.releaseYear === params.releaseYear;
 
     if (nameMatch || yearMatch) return true;
@@ -77,7 +103,18 @@ const getKitsResponse = (request, response, params) => {
     return false;
   };
 
-  const content = kits.filter(lookForKit);
+  const result = kits.filter(lookForKit);
+  const content = [];
+
+  for(let i = 0; i < result.length; i += 1)
+  {
+    content.push(makePreviewKitObj(result[i]));
+  }
+
+  if(content.length == 0)
+  {
+    return respondMeta(request, response, 204);
+  }
 
   return respond(request, response, 200, JSON.stringify(content));
 };
@@ -87,9 +124,14 @@ const getAllKitsResponse = (request, response) => {
     return respondMeta(request, response, 404);
   }
 
-  const content = JSON.stringify(kits);
+  const content = [];
 
-  return respond(request, response, 200, content);
+  for(let i = 0; i < kits.length; i += 1)
+  {
+    content.push(makePreviewKitObj(kits[i]));
+  }
+
+  return respond(request, response, 200, JSON.stringify(content));
 };
 
 const getKitResponse = (request, response, params) => {
@@ -97,7 +139,7 @@ const getKitResponse = (request, response, params) => {
     return respondMeta(request, response, 404);
   }
 
-  const content = kits[params.id];
+  const content = makePreviewKitObj(kits[params.id]);
 
   return respond(request, response, 200, JSON.stringify(content));
 };
@@ -115,10 +157,21 @@ const deleteKitResponse = (request, response, params) => {
   return respond(request, response, 200, JSON.stringify(content));
 };
 
+const getKitCommentResponse = (request, response, params) => {
+  if (kits.length === 0) {
+    return respondMeta(request, response, 404);
+  }
+  
+  const content = kits[params.id].comments;
+
+  return respond(request, response, 200, JSON.stringify(content));
+};
+
 module.exports = {
   getKitsResponse,
   getAllKitsResponse,
   getKitResponse,
   addKit,
   deleteKitResponse,
+  getKitCommentResponse,
 };

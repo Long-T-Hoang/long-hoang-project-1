@@ -11,7 +11,44 @@
     <script>
         "use strict"; // because I got rid of client-side babel
     
-        const handleResponse = (e) => {
+        const handleCommentResponse = (e) => {
+            const commentContainer = document.querySelector("#comment-container");
+
+            const obj = JSON.parse(e.target.response);
+            
+            let content = "";
+
+            for(let i = 0; i < obj.length; i += 1)
+            {
+                content += `
+                <div class="comment">
+                    <p>${obj[i].comment}</p>
+                    <hr>
+                </div>
+                `;
+            }
+
+            commentContainer.innerHTML = content;
+        }
+
+        const getComment = (id) => {
+            let queryString = '/getKitComment';
+
+            queryString += `?id=${id}`;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", queryString); 
+                
+            xhr.setRequestHeader('Accept','application/json');
+                
+            xhr.onload = handleCommentResponse;
+                
+            xhr.send();
+
+            return false;
+        }
+
+        const handleKitResponse = (e) => {
             const content = document.querySelector('#content');
             const container = document.querySelector("#kit");
 
@@ -28,7 +65,12 @@
                 <p>Release Year: ${obj.releaseYear}</p>
                 <hr>
                 </div>
+                <h2>Comments</h2>
+                <div id="comment-container">
+                </div>
             `;
+
+            getComment(obj.id);
         }
 
         const searchKit = () => {
@@ -44,7 +86,7 @@
                 
             xhr.setRequestHeader('Accept','application/json');
                 
-            xhr.onload = handleResponse;
+            xhr.onload = handleKitResponse;
                 
             xhr.send();
 
