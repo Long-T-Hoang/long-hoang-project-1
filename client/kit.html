@@ -10,19 +10,60 @@
 
     <script>
         "use strict"; // because I got rid of client-side babel
+        const params = new URLSearchParams(window.location.search);
+
+        const handleUploadComment = (xhr) => {
+            const commentUploadStatus = document.querySelector('#comment-upload p');
     
+            switch(xhr.status){
+                case 204:
+                    commentUploadStatus.innerHTML = '<b>Updated (No Content)!</b>';
+                    break;
+                case 400:
+                    commentUploadStatus.innerHTML = '<b>Bad Request!</b>';
+                    break;
+                default:
+                    commentUploadStatus.innerHTML = '<b>Error code not implemented by client</b>';
+            }
+
+            getComment(params.get("id"));
+        }
+
+        const uploadComment = (e, commentForm) => {
+            e.preventDefault();
+          
+            const commentAction = commentForm.getAttribute("action");
+            
+            const commentField = commentForm.querySelector("#comment-field");
+            const uploadTime = new Date();
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("post",commentAction);
+            
+            xhr.setRequestHeader('Accept','application/json');
+            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            
+            xhr.onload = () => handleUploadComment(xhr);
+            
+            const formData = `id=${params.get("id")}&comment=${commentField.value}&uploadDate=${uploadTime.toDateString()}`;
+            xhr.send(formData); 
+            
+            return false; // prevents event bubbling
+        }
+
         const handleCommentResponse = (e) => {
             const commentContainer = document.querySelector("#comment-container");
 
             const obj = JSON.parse(e.target.response);
-            
+            console.log(obj);
             let content = "";
 
             for(let i = 0; i < obj.length; i += 1)
             {
                 content += `
                 <div class="comment">
-                    <p>${obj[i].comment}</p>
+                    <p class="comment-date">${obj[i].uploadDate}</p>
+                    <p class="comment-text">${obj[i].comment}</p>
                     <hr>
                 </div>
                 `;
@@ -50,33 +91,47 @@
 
         const handleKitResponse = (e) => {
             const content = document.querySelector('#content');
-            const container = document.querySelector("#kit");
+            const container = document.querySelector("#kits");
 
             const obj = JSON.parse(e.target.response);
             
-            console.log(obj);
-
-            // temporarily using links of image online
+            //console.log(obj);
 
             container.innerHTML = `
                 <div class="kit">
-                <img src="${obj.imageURL}" alt="${obj.name}">   
-                <p>Name: ${obj.name}</p>
-                <p>Release Year: ${obj.releaseYear}</p>
-                <hr>
+                    <img src="${obj.imageURL}" alt="${obj.name}">   
+                    <p>Name: ${obj.name}</p>
+                    <p>Release Year: ${obj.releaseYear}</p>
+                    <hr>
                 </div>
+
                 <h2>Comments</h2>
+
+                <div id="comment-upload">
+                    <p></p>
+                    <form id="comment-form" action="/submitComment">
+                        <textarea id="comment-field" placeholder="Add a comment..."></textarea>
+                        <input type="submit">
+                        <hr>
+                    </form>
+                </div>
+
                 <div id="comment-container">
                 </div>
             `;
-
+            
+            // setup event listener for comment upload button
+            const commentForm = document.querySelector('#comment-form');
+            const sendComment = (e) => uploadComment(e, commentForm);
+            commentForm.addEventListener('submit', sendComment);
+            
             getComment(obj.id);
         }
 
         const searchKit = () => {
             let queryString = '/getKit';
 
-            const params = new URLSearchParams(window.location.search);
+            //const params = new URLSearchParams(window.location.search);
 
             console.log(params.get("id"));
             queryString += `?id=${params.get("id")}`;
@@ -110,6 +165,6 @@
         <a href="/admin" class="header-link">Admin</a>
     </header>
     
-    <div id="kit"></div>
+    <div id="kits"></div>
 </body>
 </html>

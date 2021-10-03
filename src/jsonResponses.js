@@ -1,11 +1,16 @@
+const d = new Date();
+
 const kits = [
   {
-    id: 0, name: 'RG Nu Gundam', releaseYear: 2018, imageURL: 'https://www.1999.co.jp/itbig60/10609842.jpg',
-      comments: 
+    id: 0,
+    name: 'RG Nu Gundam',
+    releaseYear: 2018,
+    imageURL: 'https://www.1999.co.jp/itbig60/10609842.jpg',
+    comments:
         [
-          {comment: "Great kit! Would buy again 10/10"}
-        ]
-  }
+          { uploadDate: d.toDateString(), comment: 'Great kit! Would buy again 10/10' },
+        ],
+  },
 ];
 
 /*
@@ -66,7 +71,26 @@ const addKit = (request, response, uploadContent) => {
   };
   kits.push(kitToAdd);
 
-  return respond(request, response, 201, 'Created Successfully');
+  return respond(request, response, responseCode, 'Created Successfully');
+};
+
+const addComment = (request, response, uploadContent) => {
+  if (!uploadContent.comment) {
+    return respond(request, response, 400, 'comment is required', 'application/json');
+  }
+
+  const responseCode = 204;
+
+  if (kits[uploadContent.id]) {
+    const commentObj = {
+      uploadDate: uploadContent.uploadDate,
+      comment: uploadContent.comment,
+    };
+
+    kits[uploadContent.id].comments.push(commentObj);
+  }
+
+  return respond(request, response, responseCode, 'Comment Added Successfully');
 };
 
 // GET code
@@ -75,14 +99,14 @@ const makePreviewKitObj = (obj) => {
   const target = obj;
   console.log(target);
   const content = {
-    id: target.id, 
-    name: target.name, 
-    releaseYear: target.releaseYear, 
-    imageURL: target.imageURL
+    id: target.id,
+    name: target.name,
+    releaseYear: target.releaseYear,
+    imageURL: target.imageURL,
   };
 
   return content;
-}
+};
 
 const getKitsResponse = (request, response, params) => {
   if (kits.length === 0) {
@@ -106,13 +130,11 @@ const getKitsResponse = (request, response, params) => {
   const result = kits.filter(lookForKit);
   const content = [];
 
-  for(let i = 0; i < result.length; i += 1)
-  {
+  for (let i = 0; i < result.length; i += 1) {
     content.push(makePreviewKitObj(result[i]));
   }
 
-  if(content.length === 0)
-  {
+  if (content.length === 0) {
     return respondMeta(request, response, 204);
   }
 
@@ -126,8 +148,7 @@ const getAllKitsResponse = (request, response) => {
 
   const content = [];
 
-  for(let i = 0; i < kits.length; i += 1)
-  {
+  for (let i = 0; i < kits.length; i += 1) {
     content.push(makePreviewKitObj(kits[i]));
   }
 
@@ -161,7 +182,7 @@ const getKitCommentResponse = (request, response, params) => {
   if (kits.length === 0) {
     return respondMeta(request, response, 404);
   }
-  
+
   const content = kits[params.id].comments;
 
   return respond(request, response, 200, JSON.stringify(content));
@@ -172,6 +193,7 @@ module.exports = {
   getAllKitsResponse,
   getKitResponse,
   addKit,
+  addComment,
   deleteKitResponse,
   getKitCommentResponse,
 };

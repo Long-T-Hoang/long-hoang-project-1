@@ -39,28 +39,29 @@ const urlStruct = {
 };
 
 const handlePost = (request, response, pathname) => {
-  if (pathname === '/addKit') {
-    const body = [];
+  const body = [];
 
-    // https://nodejs.org/api/http.html
-    // request.on('error', (err) => {
-    request.on('error', (error) => {
-      console.dir(error);
-      response.statusCode = 400;
-      response.end();
-    });
+  request.on('error', (error) => {
+    console.dir(error);
+    response.statusCode = 400;
+    response.end();
+  });
 
-    request.on('data', (chunk) => {
-      body.push(chunk);
-    });
+  request.on('data', (chunk) => {
+    body.push(chunk);
+  });
 
-    request.on('end', () => {
-      const bodyString = Buffer.concat(body).toString();
-      const bodyParams = query.parse(bodyString);
+  request.on('end', () => {
+    const bodyString = Buffer.concat(body).toString();
+    const bodyParams = query.parse(bodyString);
 
+    if (pathname === '/addKit') {
       jsonHandler.addKit(request, response, bodyParams);
-    });
-  }
+    }
+    if (pathname === '/submitComment') {
+      jsonHandler.addComment(request, response, bodyParams);
+    }
+  });
 };
 
 const handleGet = (request, response, pathname, params) => {
@@ -77,8 +78,8 @@ const onRequest = (request, response) => {
   const params = query.parse(parsedUrl.query);
   const httpMethod = request.method;
 
-  //console.log(`pathname: ${pathname}`);
-  //console.log(params);
+  console.log(`pathname: ${pathname}`);
+  console.log(httpMethod);
 
   if (httpMethod === 'POST') {
     handlePost(request, response, pathname);
