@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GunPla Collection</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quattrocento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="default-styles.css">
 
     <script>
@@ -53,7 +55,7 @@
                     <p>Name: ${obj[i].name}</p>
                     <p>Release Year: ${obj[i].releaseYear}</p>
                     <a href=/kit?id=${obj[i].id}>Details</a>
-                    <hr>
+                    <hr class="content-divider">
                     </div>
                     `;
                 }
@@ -112,8 +114,7 @@
     </script>
 </head>
 <body>
-    <img src="/logo" alt="test logo" width="150">
-    <h1>GunPla Collection</h1>
+    <div id="logo"><h1>GunPla Collection</h1></div>
     <header>
         <a href="/" class="header-link">Main</a>
         <a href="/kits" class="header-link">Kits</a>
@@ -121,17 +122,22 @@
         <a href="/admin" class="header-link">Admin</a>
     </header>
     
-    <h3>Search GunPla kits</h3>
-    <form id="searchForm" action="/getKits" method="get">
-      <label for="name">Name: </label>
-      <input id="nameField" type="text" name="name" />
-      <label for="releaseYear">Release Year: </label>
-      <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1"/>
-      <input type="submit" value="Get Kit" />
-    </form>
+    <main>
+        <h3>Search GunPla kits</h3>
+        <form id="searchForm" action="/getKits" method="get">
+        <label for="name">Name: </label>
+        <input id="nameField" type="text" name="name" />
+        <label for="releaseYear">Release Year: </label>
+        <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1"/>
+        <br>
+        <input class="btn" type="submit" value="Get Kit" />
+        </form>
+        
+        <hr id="main-divider">
 
-    <p id="content"></p>
-    
-    <div id="kits"></div>
+        <p id="content"></p>
+        
+        <div id="kits"></div>
+    </main>
 </body>
 </html>

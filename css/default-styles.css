@@ -1,14 +1,43 @@
-*
-{
-    font-family: sans-serif;
+body{
+    margin: 0px;
+    background-color: rgb(148, 218, 212);
 }
 
 img{
     display: inline;
 }
 
+/* blurred background of header logo */
+#logo::before{
+    background-image: url("/logo");
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    width: 100%;
+    height: 20vh;
+    filter: blur(3px);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#logo{
+    height: 20vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 h1{
-    display: inline;
+    font-size: 75px;
+    margin: 0;
+    font-family: 'Audiowide', cursive;
+    background: -webkit-linear-gradient(rgb(170, 5, 5) 25px, rgb(238, 255, 0) 35px, rgb(0, 119, 255) 45px);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* header */
@@ -16,18 +45,50 @@ header{
     display: flex;
     justify-content: space-around;
     align-items: stretch;
-    border: 5px solid red;
-    background-color: blue;
+    border: 5px solid rgb(206, 18, 18);
 }
 
 .header-link{
+    text-align: center;
     align-items: center;
     flex-grow: 1;
     width: auto;
     padding: 5px;
     text-decoration: none;
-    background-color: blue;
+    background-color: rgb(0, 119, 255);
     color: white;
+    font-family: 'Audiowide', cursive;
+}
+
+/* main */
+main{
+    margin: 8px;
+    font-family: 'Quattrocento', serif;
+}
+
+main h3{
+    text-align: center;
+}
+
+main form{
+    text-align: center;
+}
+
+form input{
+    margin-right: 25px;
+}
+
+.btn{
+    margin: 5px;
+    font-family: 'Quattrocento', serif;
+}
+
+#main-divider{
+    border: 1px solid rgb(206, 18, 18);
+}
+
+.content-divider{
+    border: 1px solid rgb(0, 119, 255);
 }
 
 .kit a{
@@ -36,16 +97,45 @@ header{
     text-decoration: none;
 }
 
+/* kit detail page specifics */
+#comment-upload form{
+    text-align: left;
+}
+
+.comment:first-child{
+    border-top: 2px solid rgb(0, 119, 255);
+}
+
+.comment{
+    padding: 5px;
+    background-color: wheat;
+    height: fit-content;
+    border-bottom: 2px solid rgb(0, 119, 255);
+}
+
+.comment-date{
+    margin-top: 0px;
+    margin-left: 15px;
+    margin-bottom: 1px;
+    font-size: 90%;
+    color: rgb(75, 69, 69);
+}
+
+.comment-text{
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
 /* links */
 /* header links */
 .header-link:hover{
-    color: yellow;
-    background-color: rgb(139, 139, 255);
+    color: rgb(238, 255, 0);
+    background-color: rgb(118, 118, 247);
 }
 
 .header-link:active{
-    color: orange;
-    background-color: rgb(216, 216, 253);
+    color: rgb(101, 240, 9);
+    background-color: rgb(134, 134, 247);
 }
 
 /* detail links */

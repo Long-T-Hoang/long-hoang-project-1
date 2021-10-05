@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GunPla Collection</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quattrocento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="default-styles.css">
 
 <script>
@@ -81,8 +83,7 @@
 </script>
 </head>
 <body>
-    <img src="/logo" alt="test logo" width="150">
-    <h1>GunPla Collection</h1>
+    <div id="logo"><h1>GunPla Collection</h1></div>
     <header>
         <a href="/" class="header-link">Main</a>
         <a href="/kits" class="header-link">Kits</a>
@@ -90,19 +91,21 @@
         <a href="/admin" class="header-link">Admin</a>
     </header>
     
-    <h3>Add GunPla kits</h3>
-    <p id="content"></p>
-    <form id="nameForm" action="/addKit" method="post">
-      <label for="name">Name: </label>
-      <input id="nameField" type="text" name="name" />
-      <br>
-      <label for="releaseYear">Release Year: </label>
-      <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1"/>
-      <br>
-      <label for="imageURL">Link to image:</label>
-      <input id="imageURLField" type="text" name="imageURL"/>
-      <br>
-      <input type="submit" value="Add Kit" />
-    </form>
+    <main>
+        <h3>Add GunPla kits</h3>
+        <p id="content"></p>
+        <form id="nameForm" action="/addKit" method="post">
+        <label for="name">Name: </label>
+        <input id="nameField" type="text" name="name" />
+        <br>
+        <label for="releaseYear">Release Year: </label>
+        <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1"/>
+        <br>
+        <label for="imageURL">Link to image:</label>
+        <input id="imageURLField" type="text" name="imageURL"/>
+        <br>
+        <input class="btn" type="submit" value="Add Kit" />
+        </form>
+    </main>
 </body>
 </html>
