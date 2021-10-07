@@ -16,26 +16,34 @@ const mediaHandler = require('./mediaResponses');
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
-  // get html
-  '/': htmlHandler.getIndexResponse,
-  '/kits': htmlHandler.getKitsResponse,
-  '/upload': htmlHandler.getUploadResponse,
-  '/admin': htmlHandler.getAdminResponse,
-  '/kit': htmlHandler.getKitResponse,
-  '/default-styles.css': htmlHandler.getCSSResponse,
+  GET:
+  {
+    // get html
+    '/': htmlHandler.getIndexResponse,
+    '/kits': htmlHandler.getKitsResponse,
+    '/upload': htmlHandler.getUploadResponse,
+    '/admin': htmlHandler.getAdminResponse,
+    '/kit': htmlHandler.getKitResponse,
+    '/default-styles.css': htmlHandler.getCSSResponse,
 
-  // function end points
-  '/allKits': jsonHandler.getAllKitsResponse,
-  '/getKits': jsonHandler.getKitsResponse,
-  '/getKit': jsonHandler.getKitResponse,
-  '/deleteKit': jsonHandler.deleteKitResponse,
-  '/getKitComment': jsonHandler.getKitCommentResponse,
+    // function end points
+    '/allKits': jsonHandler.getAllKitsResponse,
+    '/getKits': jsonHandler.getKitsResponse,
+    '/getKit': jsonHandler.getKitResponse,
+    '/deleteKit': jsonHandler.deleteKitResponse,
+    '/getKitComment': jsonHandler.getKitCommentResponse,
 
-  // media end points
-  '/logo': mediaHandler.getLogoResponse,
-
+    // media end points
+    '/logo': mediaHandler.getLogoResponse,
+  },
+  HEAD:
+  {
+    '/allKits': jsonHandler.getAllKitsHeadResponse,
+    '/getKits': jsonHandler.getKitsHeadResponse,
+    '/getKit': jsonHandler.getKitHeadResponse,
+    '/getKitComment': jsonHandler.getKitCommentHeadResponse,
+  },
   notFound: htmlHandler.get404Response,
-
 };
 
 const handlePost = (request, response, pathname) => {
@@ -64,9 +72,9 @@ const handlePost = (request, response, pathname) => {
   });
 };
 
-const handleGet = (request, response, pathname, params) => {
-  if (urlStruct[pathname]) {
-    urlStruct[pathname](request, response, params);
+const handleGetAndHead = (request, response, pathname, params, method, acceptedTypes) => {
+  if (urlStruct[method][pathname]) {
+    urlStruct[method][pathname](request, response, params, acceptedTypes);
   } else {
     urlStruct.notFound(request, response);
   }
@@ -78,13 +86,18 @@ const onRequest = (request, response) => {
   const params = query.parse(parsedUrl.query);
   const httpMethod = request.method;
 
-  console.log(`pathname: ${pathname}`);
-  console.log(httpMethod);
+  let acceptedTypes = [];
+  if (request.headers.accept) {
+    acceptedTypes = request.headers.accept.split(',');
+  }
+
+  // console.log(`pathname: ${pathname}`);
+  // console.log(httpMethod);
 
   if (httpMethod === 'POST') {
     handlePost(request, response, pathname);
   } else {
-    handleGet(request, response, pathname, params);
+    handleGetAndHead(request, response, pathname, params, httpMethod, acceptedTypes);
   }
 };
 
