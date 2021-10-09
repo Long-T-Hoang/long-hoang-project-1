@@ -32,7 +32,7 @@
 
         const queryString = `/deleteKit?id=${id}`;
 
-        xhr.open('GET', queryString); 
+        xhr.open('DELETE', queryString); 
             
         xhr.setRequestHeader('Accept','application/json');
             
@@ -80,8 +80,8 @@
                 <div class="kit" id="${obj[i].name.replace(regex, '-')}">
                 <p>Name: ${obj[i].name}</p>
                 <p>Release Year: ${obj[i].releaseYear}</p>
-                <a href=/kit?id=${obj[i].id}>Details</a>
-                <button class="remove-btn" type="button"data-id="${obj[i].id}">Remove kit</button>
+                <a class="detail-page" href=/kit?id=${obj[i].id}>Details</a>
+                <button class="remove-btn btn" type="button"data-id="${obj[i].id}">Remove kit</button>
                 <hr>
                 </div>
                 `;

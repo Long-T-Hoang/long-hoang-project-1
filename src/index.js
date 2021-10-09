@@ -30,7 +30,6 @@ const urlStruct = {
     '/allKits': jsonHandler.getAllKitsResponse,
     '/getKits': jsonHandler.getKitsResponse,
     '/getKit': jsonHandler.getKitResponse,
-    '/deleteKit': jsonHandler.deleteKitResponse,
     '/getKitComment': jsonHandler.getKitCommentResponse,
 
     // media end points
@@ -42,6 +41,10 @@ const urlStruct = {
     '/getKits': jsonHandler.getKitsHeadResponse,
     '/getKit': jsonHandler.getKitHeadResponse,
     '/getKitComment': jsonHandler.getKitCommentHeadResponse,
+  },
+  DELETE:
+  {
+    '/deleteKit': jsonHandler.deleteKitResponse,
   },
   notFound: htmlHandler.get404Response,
 };

@@ -20,13 +20,14 @@
         // status message
         switch(e.target.status){
             case 200:
-                content.innerHTML = '<b>Success!</b>';
+                content.innerHTML = `<b>${JSON.parse(e.target.response)[0].message}</b>`;
+                //content.innerHTML = '<b>Success!</b>';
                 break;
             case 201:
                 content.innerHTML = '<b>Created!</b>';
                 break;
             case 204:
-                content.innerHTML = '<b>Updated (No Content)!</b>';
+                content.innerHTML = `<b>${JSON.parse(e.target.response).message}</b>`;
                 break;
             case 400:
                 content.innerHTML = '<b>Bad Request!</b>';
@@ -48,13 +49,13 @@
             // print obj into page
             if(obj)
             {
-                for(let i = 0; i < obj.length; i += 1)
+                for(let i = 1; i < obj.length; i += 1)
                 {
                     container.innerHTML += `
-                    <div class="kit">
+                    <div class="kit-result">
                     <p>Name: ${obj[i].name}</p>
                     <p>Release Year: ${obj[i].releaseYear}</p>
-                    <a href=/kit?id=${obj[i].id}>Details</a>
+                    <a class="detail-page" href=/kit?id=${obj[i].id}>Details</a>
                     <hr class="content-divider">
                     </div>
                     `;
@@ -125,18 +126,22 @@
     <main>
         <h3>Search GunPla kits</h3>
         <form id="searchForm" action="/getKits" method="get">
-        <label for="name">Name: </label>
-        <input id="nameField" type="text" name="name" />
-        <label for="releaseYear">Release Year: </label>
-        <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1"/>
-        <br>
-        <input class="btn" type="submit" value="Get Kit" />
+            <div class="form-div">
+                <label for="name">Name: </label>
+                <input id="nameField" type="text" name="name" />
+            </div>
+            <div class="form-div">
+                <label for="releaseYear">Release Year: </label>
+                <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1" value="2018"/>
+            </div>
+
+            <input class="btn" type="submit" value="Get Kit" />
+
+            <p id="content"></p>
         </form>
         
         <hr id="main-divider">
 
-        <p id="content"></p>
-        
         <div id="kits"></div>
     </main>
 </body>

@@ -16,10 +16,13 @@
 
         const handleUploadComment = (xhr) => {
             const commentUploadStatus = document.querySelector('#comment-upload p');
-    
+            
             switch(xhr.status){
+                case 200:
+                    commentUploadStatus.innerHTML = `<b>${xhr.response}</b>`;
+                    break;  
                 case 204:
-                    commentUploadStatus.innerHTML = '<b>Updated (No Content)!</b>';
+                    commentUploadStatus.innerHTML = `<b>${xhr.response}</b>`;
                     break;
                 case 400:
                     commentUploadStatus.innerHTML = '<b>Bad Request!</b>';
@@ -66,7 +69,6 @@
                 <div class="comment">
                     <p class="comment-date">${obj[i].uploadDate}</p>
                     <p class="comment-text">${obj[i].comment}</p>
-                    
                 </div>
                 `;
             }
@@ -114,7 +116,6 @@
                     <form id="comment-form" action="/submitComment">
                         <textarea id="comment-field" placeholder="Add a comment..."></textarea>
                         <input type="submit">
-                        <hr>
                     </form>
                 </div>
 

@@ -88,10 +88,8 @@ const addKit = (request, response, uploadContent) => {
 
 const addComment = (request, response, uploadContent) => {
   if (!uploadContent.comment) {
-    return respond(request, response, 400, 'comment is required', 'application/json');
+    return respond(request, response, 200, 'Comment is required!', 'text');
   }
-
-  const responseCode = 204;
 
   if (kits[uploadContent.id]) {
     const commentObj = {
@@ -102,7 +100,7 @@ const addComment = (request, response, uploadContent) => {
     kits[uploadContent.id].comments.push(commentObj);
   }
 
-  return respond(request, response, responseCode, 'Comment Added Successfully');
+  return respond(request, response, 200, 'Comment added successfully!', 'text');
 };
 
 // Get data code
@@ -127,7 +125,7 @@ const getKits = (params) => {
       nameMatch = e.name.toLowerCase().includes(params.name.toLowerCase());
     }
 
-    const yearMatch = e.releaseYear === params.releaseYear;
+    const yearMatch = e.releaseYear === parseInt(params.releaseYear, 10);
 
     if (nameMatch || yearMatch) return true;
 
@@ -136,6 +134,8 @@ const getKits = (params) => {
 
   const result = kits.filter(lookForKit);
   const content = [];
+
+  content.push({ message: `${result.length} kit(s) found!` });
 
   for (let i = 0; i < result.length; i += 1) {
     content.push(makePreviewKitObj(result[i]));
@@ -205,13 +205,14 @@ const commentToXML = (content) => {
 // GET response  code
 const getKitsResponse = (request, response, params, acceptedTypes) => {
   if (kits.length === 0) {
-    return respondMeta(request, response, 404);
+    return respondMeta(request, response, 204);
   }
 
   const content = getKits(params);
 
   if (content.length === 0) {
-    return respondMeta(request, response, 204);
+    const statusMessage = [{ message: 'No kits found' }];
+    return respond(request, response, 200, JSON.stringify(statusMessage));
   }
 
   if (acceptedTypes.includes('text/xml')) {
@@ -223,7 +224,7 @@ const getKitsResponse = (request, response, params, acceptedTypes) => {
 
 const getAllKitsResponse = (request, response, params, acceptedTypes) => {
   if (kits.length === 0) {
-    return respondMeta(request, response, 404);
+    return respondMeta(request, response, 204);
   }
 
   const content = getAllKits();
@@ -237,7 +238,7 @@ const getAllKitsResponse = (request, response, params, acceptedTypes) => {
 
 const getKitResponse = (request, response, params, acceptedTypes) => {
   if (kits.length === 0) {
-    return respondMeta(request, response, 404);
+    return respondMeta(request, response, 204);
   }
 
   const content = getKit(params.id);
@@ -249,9 +250,10 @@ const getKitResponse = (request, response, params, acceptedTypes) => {
   return respond(request, response, 200, JSON.stringify(content));
 };
 
+// DELETE response code
 const deleteKitResponse = (request, response, params) => {
   if (kits.length <= params.id) {
-    return respondMeta(request, response, 404);
+    return respondMeta(request, response, 204);
   }
 
   const content = { name: kits[params.id].name, message: 'Kit deleted successfully!' };
@@ -264,7 +266,7 @@ const deleteKitResponse = (request, response, params) => {
 
 const getKitCommentResponse = (request, response, params, acceptedTypes) => {
   if (kits.length === 0) {
-    return respondMeta(request, response, 404);
+    return respondMeta(request, response, 204);
   }
 
   const content = getKitComment(params.id);

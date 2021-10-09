@@ -46,15 +46,15 @@
     parseJSON(xhr,content);
   };
 
-  const sendPost = (e, nameForm) => {
+  const sendPost = (e, uploadForm) => {
           e.preventDefault();
           
-          const nameAction = nameForm.getAttribute("action");
-          const nameMethod = nameForm.getAttribute("method");
+          const nameAction = uploadForm.getAttribute("action");
+          const nameMethod = uploadForm.getAttribute("method");
           
-          const nameField = nameForm.querySelector("#nameField");
-          const releaseYearField = nameForm.querySelector("#releaseYearField");
-          const imageURLField = nameForm.querySelector("#imageURLField");
+          const nameField = uploadForm.querySelector("#nameField");
+          const releaseYearField = uploadForm.querySelector("#releaseYearField");
+          const imageURLField = uploadForm.querySelector("#imageURLField");
 
           const xhr = new XMLHttpRequest();
           xhr.open(nameMethod,nameAction);
@@ -71,11 +71,11 @@
   };
 
   const init = () => {
-    const nameForm = document.querySelector('#nameForm');
+    const uploadForm = document.querySelector('#uploadForm');
     
-    const addKit = (e) => sendPost(e, nameForm);
+    const addKit = (e) => sendPost(e, uploadForm);
     
-    nameForm.addEventListener('submit', addKit);
+    uploadForm.addEventListener('submit', addKit);
   };
 
   window.onload = init;
@@ -93,18 +93,25 @@
     
     <main>
         <h3>Add GunPla kits</h3>
-        <p id="content"></p>
-        <form id="nameForm" action="/addKit" method="post">
-        <label for="name">Name: </label>
-        <input id="nameField" type="text" name="name" />
-        <br>
-        <label for="releaseYear">Release Year: </label>
-        <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1"/>
-        <br>
-        <label for="imageURL">Link to image:</label>
-        <input id="imageURLField" type="text" name="imageURL"/>
-        <br>
-        <input class="btn" type="submit" value="Add Kit" />
+        <form id="uploadForm" action="/addKit" method="post">
+            <div class="form-div">
+                <label for="name">Name: </label>
+                <input id="nameField" type="text" name="name" />
+            </div>
+
+            <div class="form-div">
+                <label for="releaseYear">Release Year: </label>
+                <input id="releaseYearField" type="number" name="releaseYear" min="2000" max="2021" step="1"/>
+            </div>
+
+            <div class="form-div">
+                <label for="imageURL">Link to image:</label>
+                <input id="imageURLField" type="text" name="imageURL"/>
+            </div>
+
+            <input class="btn" type="submit" value="Add Kit" />
+
+            <p id="content"></p>
         </form>
     </main>
 </body>
