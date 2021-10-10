@@ -70,6 +70,15 @@ main h3{
     text-align: center;
 }
 
+#content{
+    text-align: center;
+    width: 100%;
+}
+
+#content *{
+    color: rgb(77, 0, 128);
+}
+
 #main-divider{
     border: 1px solid rgb(206, 18, 18);
 }
@@ -89,6 +98,10 @@ main h3{
 
 .kit a{
     text-decoration: none;
+}
+
+.kit img{
+    max-width: 75%;
 }
 /* form */
 #searchForm{

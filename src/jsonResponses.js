@@ -4,12 +4,94 @@ const kits = [
   {
     id: 0,
     name: 'RG Nu Gundam',
-    releaseYear: 2018,
+    releaseYear: 2019,
     imageURL: 'https://www.1999.co.jp/itbig60/10609842.jpg',
+    msrp: 4536,
     comments:
         [
           { uploadDate: d.toDateString(), comment: 'Great kit! Would buy again 10/10' },
         ],
+  },
+  {
+    id: 1,
+    name: 'RG Sazabi',
+    releaseYear: 2018,
+    imageURL: 'https://www.1999.co.jp/itbig53/10538039.jpg',
+    msrp: 4860,
+    comments:
+        [],
+  },
+  {
+    id: 2,
+    name: 'RG Full Armor Unicorn Gundam',
+    releaseYear: 2018,
+    imageURL: 'https://www.1999.co.jp/itbig55/10556937.jpg',
+    msrp: 5832,
+    comments:
+        [],
+  },
+  {
+    id: 3,
+    name: 'HGUC Moon Gundam',
+    releaseYear: 2018,
+    imageURL: 'https://m.media-amazon.com/images/I/71Oqqgp7uTL._AC_SX679_.jpg',
+    msrp: 3000,
+    comments:
+        [],
+  },
+  {
+    id: 4,
+    name: 'RG Crossbone Gundam X1',
+    releaseYear: 2019,
+    imageURL: 'https://m.media-amazon.com/images/I/61WEAQGw4XL._AC_SL1200_.jpg',
+    msrp: 2700,
+    comments:
+        [],
+  },
+  {
+    id: 5,
+    name: 'PG RX-0 Unicorn Gundam',
+    releaseYear: 2014,
+    imageURL: 'https://www.hlj.com/media/catalog/product/b/a/ban994365box.jpg',
+    msrp: 21600,
+    comments:
+        [],
+  },
+  {
+    id: 6,
+    name: 'MG Full Armor Gundam Thunderbolt Ver. KA',
+    releaseYear: 2016,
+    imageURL: 'https://www.1999.co.jp/itbig38/10388934.jpg',
+    msrp: 7000,
+    comments:
+        [],
+  },
+  {
+    id: 7,
+    name: 'HG Barbatos Gundam',
+    releaseYear: 2016,
+    imageURL: 'https://m.media-amazon.com/images/I/81GIPYIoC0L._AC_SL1500_.jpg',
+    msrp: 1100,
+    comments:
+        [],
+  },
+  {
+    id: 8,
+    name: 'PG Unleashed RX-78-2 Gundam',
+    releaseYear: 2020,
+    imageURL: 'https://i.ebayimg.com/images/g/S5cAAOSwUp1gUG98/s-l640.jpg',
+    msrp: 25000,
+    comments:
+        [],
+  },
+  {
+    id: 9,
+    name: 'RG Hi-Nu Gundam',
+    releaseYear: 2021,
+    imageURL: 'https://www.1999.co.jp/itbig77/10777897.jpg',
+    msrp: 4950, 
+    comments:
+        [],
   },
 ];
 
@@ -57,33 +139,38 @@ const headRespond = (request, response, status, content, type = 'application/jso
 
 // POST code
 const addKit = (request, response, uploadContent) => {
+  const content = { message: 'name and releaseYear are both required' };
+  
   if (!uploadContent.name || !uploadContent.releaseYear) {
-    return respond(request, response, 400, 'name and releaseYear are both required', 'application/json');
+    return respond(request, response, 400, JSON.stringify(content));
   }
 
   let responseCode = 201;
 
   const searchKit = kits.find((e) => e.name === uploadContent.name);
 
-  if (searchKit) {
-    responseCode = 204;
-    const index = kits.indexOf(searchKit);
-    kits[index].name = uploadContent.name;
-    kits[index].releaseYear = uploadContent.releaseYear;
-
-    return respondMeta(request, response, responseCode);
-  }
-
-  // create object to add to aray
   const kitToAdd = {
     id: kits.length,
     name: uploadContent.name,
     releaseYear: uploadContent.releaseYear,
     imageURL: uploadContent.imageURL,
+    msrp: uploadContent.msrp,
+    comments: []
   };
-  kits.push(kitToAdd);
 
-  return respond(request, response, responseCode, 'Created Successfully');
+  if (searchKit) {
+    responseCode = 204;
+    const index = kits.indexOf(searchKit);
+    
+    kits[index] = kitToAdd;
+
+    return respondMeta(request, response, responseCode);
+  }
+
+  kits.push(kitToAdd);
+  console.log(kits);
+  content.message = 'Created Successfully';
+  return respond(request, response, responseCode, JSON.stringify(content));
 };
 
 const addComment = (request, response, uploadContent) => {
@@ -104,15 +191,27 @@ const addComment = (request, response, uploadContent) => {
 };
 
 // Get data code
-const makePreviewKitObj = (obj) => {
+const makePreviewKitObj = (obj, fullData) => {
   const target = obj;
+  let content;
 
-  const content = {
-    id: target.id,
-    name: target.name,
-    releaseYear: target.releaseYear,
-    imageURL: target.imageURL,
-  };
+  if(!fullData)
+  {
+    content = {
+      id: target.id,
+      name: target.name,
+      releaseYear: target.releaseYear,
+    }
+  }
+  else{
+    content = {
+      id: target.id,
+      name: target.name,
+      releaseYear: target.releaseYear,
+      msrp: target.msrp,
+      imageURL: target.imageURL,
+    }
+  }
 
   return content;
 };
@@ -138,7 +237,7 @@ const getKits = (params) => {
   content.push({ message: `${result.length} kit(s) found!` });
 
   for (let i = 0; i < result.length; i += 1) {
-    content.push(makePreviewKitObj(result[i]));
+    content.push(makePreviewKitObj(result[i], false));
   }
 
   return content;
@@ -148,13 +247,13 @@ const getAllKits = () => {
   const content = [];
 
   for (let i = 0; i < kits.length; i += 1) {
-    content.push(makePreviewKitObj(kits[i]));
+    content.push(makePreviewKitObj(kits[i], false));
   }
 
   return content;
 };
 
-const getKit = (id) => makePreviewKitObj(kits[id]);
+const getKit = (id) => makePreviewKitObj(kits[id], true);
 
 const getKitComment = (id) => kits[id].comments;
 
@@ -250,6 +349,20 @@ const getKitResponse = (request, response, params, acceptedTypes) => {
   return respond(request, response, 200, JSON.stringify(content));
 };
 
+const getKitCommentResponse = (request, response, params, acceptedTypes) => {
+  if (kits.length === 0) {
+    return respondMeta(request, response, 204);
+  }
+
+  const content = getKitComment(params.id);
+
+  if (acceptedTypes.includes('text/xml')) {
+    return respond(request, response, 200, commentToXML(content), 'text/xml');
+  }
+  console.log(content);
+  return respond(request, response, 200, JSON.stringify(content));
+};
+
 // DELETE response code
 const deleteKitResponse = (request, response, params) => {
   if (kits.length <= params.id) {
@@ -264,19 +377,6 @@ const deleteKitResponse = (request, response, params) => {
   return respond(request, response, 200, JSON.stringify(content));
 };
 
-const getKitCommentResponse = (request, response, params, acceptedTypes) => {
-  if (kits.length === 0) {
-    return respondMeta(request, response, 204);
-  }
-
-  const content = getKitComment(params.id);
-
-  if (acceptedTypes.includes('text/xml')) {
-    return respond(request, response, 200, commentToXML(content), 'text/xml');
-  }
-
-  return respond(request, response, 200, JSON.stringify(content));
-};
 
 // HEAD response code
 const getKitsHeadResponse = (request, response, params, acceptedTypes) => {

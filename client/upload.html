@@ -55,17 +55,24 @@
           const nameField = uploadForm.querySelector("#nameField");
           const releaseYearField = uploadForm.querySelector("#releaseYearField");
           const imageURLField = uploadForm.querySelector("#imageURLField");
+          const msrpField = uploadForm.querySelector("#msrpField");
 
           const xhr = new XMLHttpRequest();
           xhr.open(nameMethod,nameAction);
           
           xhr.setRequestHeader('Accept','application/json');
-          xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+          xhr.setRequestHeader('Content-Type','application/json');
           
           xhr.onload = () => handleResponse(xhr);
           
-          const formData = `name=${nameField.value}&releaseYear=${releaseYearField.value}&imageURL=${imageURLField.value}`;
-          xhr.send(formData); 
+          const formData = {
+            name: nameField.value,
+            releaseYear: releaseYearField.value,
+            imageURL: imageURLField.value,
+            msrp: msrpField.value,
+          };
+          
+          xhr.send(JSON.stringify(formData)); 
           
           return false; // prevents event bubbling
   };
@@ -105,13 +112,18 @@
             </div>
 
             <div class="form-div">
+                <label for="msrp">MSRP (in Yen):</label>
+                <input id="msrpField" type="number" name="msrp" step="100"/>
+            </div>
+            
+            <div class="form-div">
                 <label for="imageURL">Link to image:</label>
                 <input id="imageURLField" type="text" name="imageURL"/>
             </div>
 
             <input class="btn" type="submit" value="Add Kit" />
 
-            <p id="content"></p>
+            <div id="content"></p>
         </form>
     </main>
 </body>

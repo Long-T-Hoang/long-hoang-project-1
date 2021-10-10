@@ -46,11 +46,16 @@
             xhr.open("post",commentAction);
             
             xhr.setRequestHeader('Accept','application/json');
-            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            xhr.setRequestHeader('Content-Type','application/json');
             
             xhr.onload = () => handleUploadComment(xhr);
             
-            const formData = `id=${params.get("id")}&comment=${commentField.value}&uploadDate=${uploadTime.toDateString()}`;
+            const formData = {
+                id: params.get("id"),
+                comment: commentField.value,
+                uploadDate: uploadTime.toDateString(),
+            };
+            
             xhr.send(formData); 
             
             return false; // prevents event bubbling
@@ -100,12 +105,18 @@
             const obj = JSON.parse(e.target.response);
             
             //console.log(obj);
+            container.innerHTML = "<div class=kit>";
 
-            container.innerHTML = `
-                <div class="kit">
-                    <img src="${obj.imageURL}" alt="${obj.name}">   
+            if(obj.imageURL)
+            {
+                container.innerHTML += `<img src="${obj.imageURL}" alt="${obj.name}">`;
+            }
+
+            container.innerHTML += `
+                    
                     <p>Name: ${obj.name}</p>
                     <p>Release Year: ${obj.releaseYear}</p>
+                    <p>MSRP: ${obj.msrp}&#165;</p>
                     <hr>
                 </div>
 

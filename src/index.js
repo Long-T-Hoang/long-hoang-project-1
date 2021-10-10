@@ -64,8 +64,8 @@ const handlePost = (request, response, pathname) => {
 
   request.on('end', () => {
     const bodyString = Buffer.concat(body).toString();
-    const bodyParams = query.parse(bodyString);
-
+    const bodyParams = JSON.parse(bodyString);
+    
     if (pathname === '/addKit') {
       jsonHandler.addKit(request, response, bodyParams);
     }
