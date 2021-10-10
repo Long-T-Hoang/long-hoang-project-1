@@ -89,7 +89,7 @@ const kits = [
     name: 'RG Hi-Nu Gundam',
     releaseYear: 2021,
     imageURL: 'https://www.1999.co.jp/itbig77/10777897.jpg',
-    msrp: 4950, 
+    msrp: 4950,
     comments:
         [],
   },
@@ -140,7 +140,7 @@ const headRespond = (request, response, status, content, type = 'application/jso
 // POST code
 const addKit = (request, response, uploadContent) => {
   const content = { message: 'name and releaseYear are both required' };
-  
+
   if (!uploadContent.name || !uploadContent.releaseYear) {
     return respond(request, response, 400, JSON.stringify(content));
   }
@@ -155,13 +155,13 @@ const addKit = (request, response, uploadContent) => {
     releaseYear: uploadContent.releaseYear,
     imageURL: uploadContent.imageURL,
     msrp: uploadContent.msrp,
-    comments: []
+    comments: [],
   };
 
   if (searchKit) {
     responseCode = 204;
     const index = kits.indexOf(searchKit);
-    
+
     kits[index] = kitToAdd;
 
     return respondMeta(request, response, responseCode);
@@ -195,22 +195,20 @@ const makePreviewKitObj = (obj, fullData) => {
   const target = obj;
   let content;
 
-  if(!fullData)
-  {
+  if (!fullData) {
     content = {
       id: target.id,
       name: target.name,
       releaseYear: target.releaseYear,
-    }
-  }
-  else{
+    };
+  } else {
     content = {
       id: target.id,
       name: target.name,
       releaseYear: target.releaseYear,
       msrp: target.msrp,
       imageURL: target.imageURL,
-    }
+    };
   }
 
   return content;
@@ -376,7 +374,6 @@ const deleteKitResponse = (request, response, params) => {
   console.log(content);
   return respond(request, response, 200, JSON.stringify(content));
 };
-
 
 // HEAD response code
 const getKitsHeadResponse = (request, response, params, acceptedTypes) => {
