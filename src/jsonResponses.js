@@ -139,9 +139,9 @@ const headRespond = (request, response, status, content, type = 'application/jso
 
 // POST code
 const addKit = (request, response, uploadContent) => {
-  const content = { message: 'name and releaseYear are both required' };
+  const content = { message: 'name, MSRP and releaseYear are required' };
 
-  if (!uploadContent.name || !uploadContent.releaseYear) {
+  if (!uploadContent.name || !uploadContent.releaseYear || !uploadContent.msrp) {
     return respond(request, response, 400, JSON.stringify(content));
   }
 
