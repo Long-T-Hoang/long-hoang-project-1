@@ -150,7 +150,7 @@ const addKit = (request, response, uploadContent) => {
   const searchKit = kits.find((e) => e.name === uploadContent.name);
 
   const kitToAdd = {
-    id: kits[kits.length].id + 1,
+    id: kits[kits.length - 1].id + 1,
     name: uploadContent.name,
     releaseYear: uploadContent.releaseYear,
     imageURL: uploadContent.imageURL,
