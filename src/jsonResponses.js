@@ -150,7 +150,7 @@ const addKit = (request, response, uploadContent) => {
   const searchKit = kits.find((e) => e.name === uploadContent.name);
 
   const kitToAdd = {
-    id: kits.length,
+    id: kits[kits.length].id + 1,
     name: uploadContent.name,
     releaseYear: uploadContent.releaseYear,
     imageURL: uploadContent.imageURL,
@@ -168,7 +168,7 @@ const addKit = (request, response, uploadContent) => {
   }
 
   kits.push(kitToAdd);
-  //console.log(kits);
+  // console.log(kits);
   content.message = 'Created Successfully';
   return respond(request, response, responseCode, JSON.stringify(content));
 };
@@ -178,7 +178,7 @@ const addComment = (request, response, uploadContent) => {
     return respond(request, response, 200, 'Comment is required!', 'text');
   }
 
-  const target = kits.find(x => x.id = uploadContent.id);
+  const target = kits.find((x) => x.id === parseInt(uploadContent.id, 10));
 
   if (target) {
     const commentObj = {
@@ -253,9 +253,13 @@ const getAllKits = () => {
   return content;
 };
 
-const getKit = (targetID) => makePreviewKitObj(kits.find(x => x.id === parseInt(targetID)), true);
+const getKit = (targetID) => {
+  const target = kits.find((x) => x.id === parseInt(targetID, 10));
 
-const getKitComment = (targetID) => kits.find(x => x.id === parseInt(targetID)).comments;
+  return makePreviewKitObj(target, true);
+};
+
+const getKitComment = (targetID) => kits.find((x) => x.id === parseInt(targetID, 10)).comments;
 
 const kitToXML = (content) => {
   if (Array.isArray(content)) {
@@ -365,8 +369,8 @@ const getKitCommentResponse = (request, response, params, acceptedTypes) => {
 
 // DELETE response code
 const deleteKitResponse = (request, response, params) => {
-  const target = kits.find(x => x.id === parseInt(params.id));
-  
+  const target = kits.find((x) => x.id === parseInt(params.id, 10));
+
   if (!target) {
     return respondMeta(request, response, 204);
   }
