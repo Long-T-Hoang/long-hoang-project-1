@@ -194,7 +194,7 @@ const addComment = (request, response, uploadContent) => {
 const makePreviewKitObj = (obj, fullData) => {
   const target = obj;
   let content;
-
+  console.log(obj);
   if (!fullData) {
     content = {
       id: target.id,
@@ -251,9 +251,9 @@ const getAllKits = () => {
   return content;
 };
 
-const getKit = (id) => makePreviewKitObj(kits[id], true);
+const getKit = (targetID) => makePreviewKitObj(kits.find(x => x.id === parseInt(targetID)), true);
 
-const getKitComment = (id) => kits[id].comments;
+const getKitComment = (targetID) => kits.find(x => x.id === parseInt(targetID)).comments;
 
 const kitToXML = (content) => {
   if (Array.isArray(content)) {
@@ -363,14 +363,16 @@ const getKitCommentResponse = (request, response, params, acceptedTypes) => {
 
 // DELETE response code
 const deleteKitResponse = (request, response, params) => {
-  if (kits.length <= params.id) {
+  const target = kits.find(x => x.id === parseInt(params.id));
+  
+  if (!target) {
     return respondMeta(request, response, 204);
   }
 
-  const content = { name: kits[params.id].name, message: 'Kit deleted successfully!' };
+  const content = { name: target.name, message: 'Kit deleted successfully!' };
 
   // delete entry
-  kits.splice(params.id, 1);
+  kits.splice(kits.indexOf(target), 1);
   return respond(request, response, 200, JSON.stringify(content));
 };
 

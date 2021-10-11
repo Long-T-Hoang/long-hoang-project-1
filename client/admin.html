@@ -44,7 +44,8 @@
     const writeAllKits = (e) => {
         const content = document.querySelector('#content');
         const container = document.querySelector("#kits");
-
+        container.innerHTML = "";
+        
         // status message
         switch(e.target.status){
             case 200:
