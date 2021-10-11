@@ -178,13 +178,15 @@ const addComment = (request, response, uploadContent) => {
     return respond(request, response, 200, 'Comment is required!', 'text');
   }
 
-  if (kits[uploadContent.id]) {
+  const target = kits.find(x => x.id = uploadContent.id);
+
+  if (target) {
     const commentObj = {
       uploadDate: uploadContent.uploadDate,
       comment: uploadContent.comment,
     };
 
-    kits[uploadContent.id].comments.push(commentObj);
+    target.comments.push(commentObj);
   }
 
   return respond(request, response, 200, 'Comment added successfully!', 'text');
