@@ -56,7 +56,7 @@
                 uploadDate: uploadTime.toDateString(),
             };
             
-            xhr.send(formData); 
+            xhr.send(JSON.stringify(formData)); 
             
             return false; // prevents event bubbling
         }

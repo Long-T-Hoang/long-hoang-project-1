@@ -168,7 +168,7 @@ const addKit = (request, response, uploadContent) => {
   }
 
   kits.push(kitToAdd);
-  console.log(kits);
+  //console.log(kits);
   content.message = 'Created Successfully';
   return respond(request, response, responseCode, JSON.stringify(content));
 };
@@ -357,7 +357,7 @@ const getKitCommentResponse = (request, response, params, acceptedTypes) => {
   if (acceptedTypes.includes('text/xml')) {
     return respond(request, response, 200, commentToXML(content), 'text/xml');
   }
-  console.log(content);
+
   return respond(request, response, 200, JSON.stringify(content));
 };
 
@@ -371,7 +371,6 @@ const deleteKitResponse = (request, response, params) => {
 
   // delete entry
   kits.splice(params.id, 1);
-  console.log(content);
   return respond(request, response, 200, JSON.stringify(content));
 };
 
